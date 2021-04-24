@@ -14,16 +14,20 @@ namespace Flags
                 Description = description,
                 Type = FlagType.String
             });
-            
-            string one = cachedArgs.Where(x => x.StartsWith(flag)).FirstOrDefault();
-            
+
+            string one = cachedArgs.Where(x =>
+            {
+                if (x.StartsWith("-") && x.Contains('='))
+                {
+                    return x.Split('=')[0].Substring(1) == flag;
+                }
+                return false;
+            }).FirstOrDefault();
+
             if (one != null)
             {
-                if (one.Contains("="))
-                {
-                    var = one.Split('=')[1];
-                    return;
-                }
+                var = one.Split('=')[1];
+                return;
             }
 
             var = defaultVar;
@@ -37,15 +41,19 @@ namespace Flags
                 Type = FlagType.Int
             });
 
-            string one = cachedArgs.Where(x => x.StartsWith(flag)).FirstOrDefault();
+            string one = cachedArgs.Where(x =>
+            {
+                if (x.StartsWith("-") && x.Contains('='))
+                {
+                    return x.Split('=')[0].Substring(1) == flag;
+                }
+                return false;
+            }).FirstOrDefault();
 
             if (one != null)
             {
-                if (one.Contains("="))
-                {
-                    var = Convert.ToInt32(one.Split('=')[1]);
-                    return;
-                }
+                var = Convert.ToInt32(one.Split('=')[1].Replace('.', ','));
+                return;
             }
 
             var = defaultVar;
@@ -59,15 +67,19 @@ namespace Flags
                 Type = FlagType.Float
             });
             
-            string one = cachedArgs.Where(x => x.StartsWith(flag)).FirstOrDefault();
+            string one = cachedArgs.Where(x =>
+            {
+                if (x.StartsWith("-") && x.Contains('='))
+                {
+                    return x.Split('=')[0].Substring(1) == flag;
+                }
+                return false;
+            }).FirstOrDefault();
 
             if (one != null)
             {
-                if (one.Contains("="))
-                {
-                    var = Convert.ToSingle(one.Split('=')[1]);
-                    return;
-                }
+                var = Convert.ToSingle(one.Split('=')[1].Replace('.', ','));
+                return;
             }
 
             var = defaultVar;
@@ -81,7 +93,15 @@ namespace Flags
                 Type = FlagType.Bool
             });
 
-            string one = cachedArgs.Where(x => x.Equals(flag)).FirstOrDefault();
+            string one = cachedArgs.Where(x =>
+            {
+                if (x.StartsWith("-"))
+                {
+                    return x.Substring(1) == flag;
+                }
+
+                return false;
+            }).FirstOrDefault();
 
             if (one != null)
             {
@@ -92,7 +112,7 @@ namespace Flags
             var = defaultVar;
         }
 
-        public static bool Parse()
+        public static void Parse()
         {
             string Description = string.Empty;
 
@@ -108,10 +128,8 @@ namespace Flags
             if (cachedArgs.Contains("-h") || cachedArgs.Contains("-help"))
             {
                 Console.WriteLine(Description);
-                return true;
+                Environment.Exit(-1);
             }
-
-            return false;
         }
     }
 }
