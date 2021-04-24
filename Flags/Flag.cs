@@ -7,6 +7,18 @@ namespace Flags
     {
         private static string[] cachedArgs = Environment.GetCommandLineArgs();
 
+        internal static string GetFlag(string flag)
+        {
+            return cachedArgs.Where(x =>
+            {
+                if (x.StartsWith("-") && x.Contains('='))
+                {
+                    return x.Split('=')[0].Substring(1) == flag;
+                }
+                return false;
+            }).FirstOrDefault();
+        }
+
         public static void StringVar(ref string var, string flag, string defaultVar, string description)
         {
             Flags.FlagInfos.Add(flag, new FlagInfo
@@ -15,14 +27,7 @@ namespace Flags
                 Type = FlagType.String
             });
 
-            string one = cachedArgs.Where(x =>
-            {
-                if (x.StartsWith("-") && x.Contains('='))
-                {
-                    return x.Split('=')[0].Substring(1) == flag;
-                }
-                return false;
-            }).FirstOrDefault();
+            string one = GetFlag(flag);
 
             if (one != null)
             {
@@ -41,14 +46,7 @@ namespace Flags
                 Type = FlagType.Int
             });
 
-            string one = cachedArgs.Where(x =>
-            {
-                if (x.StartsWith("-") && x.Contains('='))
-                {
-                    return x.Split('=')[0].Substring(1) == flag;
-                }
-                return false;
-            }).FirstOrDefault();
+            string one = GetFlag(flag);
 
             if (one != null)
             {
@@ -67,14 +65,7 @@ namespace Flags
                 Type = FlagType.Float
             });
             
-            string one = cachedArgs.Where(x =>
-            {
-                if (x.StartsWith("-") && x.Contains('='))
-                {
-                    return x.Split('=')[0].Substring(1) == flag;
-                }
-                return false;
-            }).FirstOrDefault();
+            string one = GetFlag(flag);
 
             if (one != null)
             {
